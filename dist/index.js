@@ -24103,6 +24103,7 @@ class ModPublisher extends Publisher {
                 if (!gameVersions.length) {
                     throw new Error("At least one game version should be specified");
                 }
+                this.logger.info(`Resolved game versions: ${gameVersions}`);
             }
             const fullVersion = options.splitReleases
                 ? `${loaders[0]}-${gameVersions[0]}-${version}`
