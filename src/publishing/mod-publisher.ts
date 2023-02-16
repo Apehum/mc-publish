@@ -10,10 +10,12 @@ import Version from "../utils/versioning/version";
 import VersionType from "../utils/versioning/version-type";
 import DependencyKind from "../metadata/dependency-kind";
 import path from "path";
+import { getDefaultLogger } from "../utils/logging/logger";
 
 interface ModPublisherOptions {
     id: string;
     token: string;
+    splitReleases?: boolean;
     versionType?: "alpha" | "beta" | "release";
     loaders?: string | string[];
     name?: string;
@@ -68,11 +70,20 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
 
     public async publish(files: File[], options: ModPublisherOptions): Promise<void> {
         this.validateOptions(options);
-        const releaseInfo = <any>context.payload.release;
 
         if (!Array.isArray(files) || !files.length) {
             throw new Error("No upload files were specified");
         }
+
+        if (options.splitReleases) {
+            await Promise.all(files.map(file => this.publishFiles([file], options)));
+        } else {
+            await this.publishFiles(files, options);
+        }
+    }
+
+    private async publishFiles(files: File[], options: ModPublisherOptions): Promise<void> {
+        const releaseInfo = <any>context.payload.release;
 
         const token = options.token;
         if (!token) {
@@ -121,13 +132,19 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             }
         }
 
+        const fullVersion = options.splitReleases
+            ? `${loaders[0]}-${gameVersions[0]}-${version}`
+            : version;
+
         const java = processMultilineInput(options.java);
         const dependencies = typeof options.dependencies === "string"
             ? processDependenciesInput(options.dependencies)
             : metadata?.dependencies || [];
         const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
 
-        await this.publishMod(id, token, name, version, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
+        getDefaultLogger().info(`Uploading ${fullVersion} to ${this.target}`);
+
+        await this.publishMod(id, token, name, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
     }
 
     protected abstract publishMod(id: string, token: string, name: string, version: string, versionType: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[], options: Record<string, unknown>): Promise<void>;
