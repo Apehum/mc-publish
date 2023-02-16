@@ -24091,7 +24091,8 @@ class ModPublisher extends Publisher {
             const gameVersions = processMultilineInput(options.gameVersions);
             if (!gameVersions.length && this.requiresGameVersions) {
                 const minecraftVersion = (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0]) ||
-                    parseVersionNameFromFileVersion(version);
+                    parseVersionNameFromFileVersion(version) ||
+                    parseVersionNameFromFileVersion(filename);
                 this.logger.info(`Resolved mc version: ${minecraftVersion}`);
                 if (minecraftVersion) {
                     const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
@@ -24112,7 +24113,7 @@ class ModPublisher extends Publisher {
                 ? processDependenciesInput(options.dependencies)
                 : (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies) || [];
             const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
-            this.logger.info(`Uploading ${fullVersion} (${files[0]}) to ${publisher_target.toString(this.target)}`);
+            this.logger.info(`Uploading ${fullVersion} (${files[0].name}) to ${publisher_target.toString(this.target)}`);
             yield this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, options);
         });
     }

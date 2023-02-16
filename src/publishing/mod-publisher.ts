@@ -120,7 +120,8 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         if (!gameVersions.length && this.requiresGameVersions) {
             const minecraftVersion =
                 metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
-                parseVersionNameFromFileVersion(version);
+                parseVersionNameFromFileVersion(version) ||
+                parseVersionNameFromFileVersion(filename);
 
             this.logger.info(`Resolved mc version: ${minecraftVersion}`);
 
@@ -147,7 +148,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             : metadata?.dependencies || [];
         const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
 
-        this.logger.info(`Uploading ${fullVersion} (${files[0]}) to ${PublisherTarget.toString(this.target)}`);
+        this.logger.info(`Uploading ${fullVersion} (${files[0].name}) to ${PublisherTarget.toString(this.target)}`);
 
         await this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
     }
