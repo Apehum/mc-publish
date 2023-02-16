@@ -64,6 +64,10 @@ inputs:
     description: A valid token for the GitHub API
     required: false
     default: ${undefined}
+  split-releases:
+    description: Split releases by files
+    required: false
+    default: ${undefined}
   files:
     description: A glob of the files to upload
     required: false
