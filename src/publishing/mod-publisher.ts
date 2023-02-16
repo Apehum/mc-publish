@@ -129,9 +129,9 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
 
         const gameVersions = processMultilineInput(options.gameVersions);
         const minecraftVersion =
+            parseVersionNameFromFileVersion(filename) ||
             metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
-            parseVersionNameFromFileVersion(version) ||
-            parseVersionNameFromFileVersion(filename);
+            parseVersionNameFromFileVersion(version);
         if (!gameVersions.length && this.requiresGameVersions) {
 
             if (minecraftVersion) {

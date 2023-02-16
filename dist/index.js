@@ -24098,9 +24098,9 @@ class ModPublisher extends Publisher {
                 }
             }
             const gameVersions = processMultilineInput(options.gameVersions);
-            const minecraftVersion = (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0]) ||
-                parseVersionNameFromFileVersion(version) ||
-                parseVersionNameFromFileVersion(filename);
+            const minecraftVersion = parseVersionNameFromFileVersion(filename) ||
+                (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0]) ||
+                parseVersionNameFromFileVersion(version);
             if (!gameVersions.length && this.requiresGameVersions) {
                 if (minecraftVersion) {
                     const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
