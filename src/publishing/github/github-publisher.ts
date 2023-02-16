@@ -23,10 +23,6 @@ export default class GitHubPublisher extends ModPublisher {
         return false;
     }
 
-    protected get requiresGameVersions(): boolean {
-        return false;
-    }
-
     protected async publishMod(_id: string, token: string, name: string, version: string, channel: string, _loaders: string[], _gameVersions: string[], _java: string[], changelog: string, files: File[], _dependencies: Dependency[], options: Record<string, unknown>): Promise<void> {
         const repo = github.context.repo;
         const octokit = github.getOctokit(token);

@@ -24263,9 +24263,6 @@ class GitHubPublisher extends ModPublisher {
     get requiresId() {
         return false;
     }
-    get requiresGameVersions() {
-        return false;
-    }
     publishMod(_id, token, name, version, channel, _loaders, _gameVersions, _java, changelog, files, _dependencies, options) {
         var _a, _b;
         return github_publisher_awaiter(this, void 0, void 0, function* () {
