@@ -24050,7 +24050,6 @@ class ModPublisher extends Publisher {
                 throw new Error("No upload files were specified");
             }
             if (options.splitReleases) {
-                this.logger.info(`Split releases ${this.target.toString()}`);
                 yield Promise.all(files.map(file => this.publishFiles([file], options)));
             }
             else {
@@ -24093,6 +24092,7 @@ class ModPublisher extends Publisher {
             if (!gameVersions.length && this.requiresGameVersions) {
                 const minecraftVersion = (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0]) ||
                     parseVersionNameFromFileVersion(version);
+                this.logger.info(`Resolved mc version: ${minecraftVersion}`);
                 if (minecraftVersion) {
                     const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
                     gameVersions.push(...(yield resolver.resolve(minecraftVersion)).map(x => x.id));
@@ -24105,14 +24105,14 @@ class ModPublisher extends Publisher {
                 ? `${loaders[0]}-${gameVersions[0]}-${version}`
                 : version;
             const fullName = options.splitReleases
-                ? `${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${name} ${version}`
+                ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${gameVersions[0]}] ${name} ${version}`
                 : name;
             const java = processMultilineInput(options.java);
             const dependencies = typeof options.dependencies === "string"
                 ? processDependenciesInput(options.dependencies)
                 : (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies) || [];
             const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
-            this.logger.info(`Uploading ${fullVersion} to ${this.target}`);
+            this.logger.info(`Uploading ${fullVersion} (${files[0]}) to ${publisher_target.toString(this.target)}`);
             yield this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, options);
         });
     }

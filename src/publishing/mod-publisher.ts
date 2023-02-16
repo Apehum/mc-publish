@@ -10,7 +10,6 @@ import Version from "../utils/versioning/version";
 import VersionType from "../utils/versioning/version-type";
 import DependencyKind from "../metadata/dependency-kind";
 import path from "path";
-import { getDefaultLogger } from "../utils/logging/logger";
 
 interface ModPublisherOptions {
     id: string;
@@ -76,7 +75,6 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         if (options.splitReleases) {
-            this.logger.info(`Split releases ${this.target.toString()}`);
             await Promise.all(files.map(file => this.publishFiles([file], options)));
         } else {
             await this.publishFiles(files, options);
@@ -124,6 +122,8 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
                 metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
                 parseVersionNameFromFileVersion(version);
 
+            this.logger.info(`Resolved mc version: ${minecraftVersion}`);
+
             if (minecraftVersion) {
                 const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
                 gameVersions.push(...(await resolver.resolve(minecraftVersion)).map(x => x.id));
@@ -138,7 +138,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             : version;
 
         const fullName = options.splitReleases
-            ? `${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${name} ${version}`
+            ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${gameVersions[0]}] ${name} ${version}`
             : name;
 
         const java = processMultilineInput(options.java);
@@ -147,7 +147,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             : metadata?.dependencies || [];
         const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
 
-        this.logger.info(`Uploading ${fullVersion} to ${this.target}`);
+        this.logger.info(`Uploading ${fullVersion} (${files[0]}) to ${PublisherTarget.toString(this.target)}`);
 
         await this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
     }
