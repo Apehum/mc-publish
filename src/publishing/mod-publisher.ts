@@ -76,7 +76,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         if (options.splitReleases) {
-            this.logger.info(`Split releases ${this.target}`);
+            this.logger.info(`Split releases ${this.target.toString()}`);
             await Promise.all(files.map(file => this.publishFiles([file], options)));
         } else {
             await this.publishFiles(files, options);

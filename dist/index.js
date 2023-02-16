@@ -24050,7 +24050,7 @@ class ModPublisher extends Publisher {
                 throw new Error("No upload files were specified");
             }
             if (options.splitReleases) {
-                this.logger.info(`Split releases ${this.target}`);
+                this.logger.info(`Split releases ${this.target.toString()}`);
                 yield Promise.all(files.map(file => this.publishFiles([file], options)));
             }
             else {
@@ -24264,9 +24264,6 @@ class GitHubPublisher extends ModPublisher {
         return false;
     }
     get requiresGameVersions() {
-        return false;
-    }
-    get requiresModLoaders() {
         return false;
     }
     publishMod(_id, token, name, version, channel, _loaders, _gameVersions, _java, changelog, files, _dependencies, options) {
