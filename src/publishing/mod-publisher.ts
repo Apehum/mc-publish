@@ -76,6 +76,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         if (options.splitReleases) {
+            this.logger.info(`Split releases ${this.target}`);
             await Promise.all(files.map(file => this.publishFiles([file], options)));
         } else {
             await this.publishFiles(files, options);
@@ -146,7 +147,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             : metadata?.dependencies || [];
         const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
 
-        getDefaultLogger().info(`Uploading ${fullVersion} to ${this.target}`);
+        this.logger.info(`Uploading ${fullVersion} to ${this.target}`);
 
         await this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
     }
