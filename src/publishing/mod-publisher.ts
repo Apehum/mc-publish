@@ -75,7 +75,16 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         if (options.splitReleases) {
-            for (const file of files) {
+            const sorted = files.sort((a, b) => {
+                const aVersion = new Version(parseVersionNameFromFileVersion(a.name));
+                const bVersion = new Version(parseVersionNameFromFileVersion(b.name));
+
+                return aVersion.major - bVersion.major ||
+                    aVersion.minor - bVersion.minor ||
+                    aVersion.build - bVersion.build;
+            });
+
+            for (const file of sorted) {
                 await this.publishFiles([file], options);
             }
         } else {
@@ -119,13 +128,11 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         const gameVersions = processMultilineInput(options.gameVersions);
+        const minecraftVersion =
+            metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
+            parseVersionNameFromFileVersion(version) ||
+            parseVersionNameFromFileVersion(filename);
         if (!gameVersions.length && this.requiresGameVersions) {
-            const minecraftVersion =
-                metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
-                parseVersionNameFromFileVersion(version) ||
-                parseVersionNameFromFileVersion(filename);
-
-            this.logger.info(`Resolved mc version: ${minecraftVersion}`);
 
             if (minecraftVersion) {
                 const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
@@ -134,16 +141,14 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
             if (!gameVersions.length) {
                 throw new Error("At least one game version should be specified");
             }
-
-            this.logger.info(`Resolved game versions: ${gameVersions}`);
         }
 
         const fullVersion = options.splitReleases
-            ? `${loaders[0]}-${gameVersions[0]}-${version}`
+            ? `${loaders[0]}-${minecraftVersion}-${version}`
             : version;
 
         const fullName = options.splitReleases
-            ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${gameVersions[0]}] ${name} ${version}`
+            ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${minecraftVersion}] ${name} ${version}`
             : name;
 
         const java = processMultilineInput(options.java);
