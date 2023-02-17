@@ -24619,7 +24619,7 @@ class ModrinthPublisher extends ModPublisher {
     }
     publishMod(id, token, name, version, channel, loaders, gameVersions, _java, changelog, files, dependencies, options) {
         return modrinth_publisher_awaiter(this, void 0, void 0, function* () {
-            const featured = mapBooleanInput(options.featured, true);
+            const featured = channel === "release" && mapBooleanInput(options.featured, true);
             const unfeatureMode = mapEnumInput(options.unfeatureMode, UnfeatureMode, featured ? UnfeatureMode.Subset : UnfeatureMode.None);
             const projects = (yield Promise.all(dependencies
                 .filter((x, _, self) => (x.kind !== dependency_kind.Suggests && x.kind !== dependency_kind.Includes) || !self.find(y => y.id === x.id && y.kind !== dependency_kind.Suggests && y.kind !== dependency_kind.Includes))
