@@ -6,7 +6,7 @@ enum VersionType {
 
 namespace VersionType {
     export function fromName(name: string): VersionType {
-        if (name.match(/[+-_]alpha/i)) {
+        if (name.match(/[+-_]alpha/i) || name.includes("+")) {
             return VersionType.Alpha;
         } else if (name.match(/[+-_]beta/i)) {
             return VersionType.Beta;
