@@ -23970,7 +23970,7 @@ var VersionType;
 })(VersionType || (VersionType = {}));
 (function (VersionType) {
     function fromName(name) {
-        if (name.match(/[+-_]alpha/i) || name.includes("+")) {
+        if (name.match(/[+-_]alpha/i) || name.match(/[+-_]snapshot/i) || name.includes("+")) {
             return VersionType.Alpha;
         }
         else if (name.match(/[+-_]beta/i)) {
