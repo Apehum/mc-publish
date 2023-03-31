@@ -256,6 +256,78 @@ describe("ModMetadataReader.readMetadata", () => {
         });
     });
 
+    describe("BungeeCord", () => {
+        beforeAll(() => new Promise(resolve => {
+            const zip = new ZipFile();
+            zip.addFile("./test/content/bungee.yml", "bungee.yml");
+            zip.end();
+            zip.outputStream.pipe(fs.createWriteStream("example-plugin.bungee.jar")).on("close", resolve);
+        }));
+
+        afterAll(() => new Promise(resolve => fs.unlink("example-plugin.bungee.jar", resolve)));
+
+        test("the format can be read", async () => {
+            const metadata = await ModMetadataReader.readMetadata("example-plugin.bungee.jar");
+            expect(metadata).toBeTruthy();
+        });
+
+        test("mod info can be read", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-plugin.bungee.jar"))!;
+            expect(metadata.id).toBe("ExampleMod");
+            expect(metadata.name).toBe("ExampleMod");
+            expect(metadata.version).toBe("0.1.0");
+            expect(metadata.loaders).toMatchObject(["bungeecord"] as any);
+        });
+    });
+
+    describe("Spigot", () => {
+        beforeAll(() => new Promise(resolve => {
+            const zip = new ZipFile();
+            zip.addFile("./test/content/plugin.yml", "plugin.yml");
+            zip.end();
+            zip.outputStream.pipe(fs.createWriteStream("example-plugin.spigot.jar")).on("close", resolve);
+        }));
+
+        afterAll(() => new Promise(resolve => fs.unlink("example-plugin.spigot.jar", resolve)));
+
+        test("the format can be read", async () => {
+            const metadata = await ModMetadataReader.readMetadata("example-plugin.spigot.jar");
+            expect(metadata).toBeTruthy();
+        });
+
+        test("mod info can be read", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-plugin.spigot.jar"))!;
+            expect(metadata.id).toBe("ExampleMod");
+            expect(metadata.name).toBe("ExampleMod");
+            expect(metadata.version).toBe("0.1.0");
+            expect(metadata.loaders).toMatchObject(["spigot", "paper"] as any);
+        });
+    });
+
+    describe("Velocity", () => {
+        beforeAll(() => new Promise(resolve => {
+            const zip = new ZipFile();
+            zip.addFile("./test/content/velocity-plugin.json", "velocity-plugin.json");
+            zip.end();
+            zip.outputStream.pipe(fs.createWriteStream("example-plugin.velocity.jar")).on("close", resolve);
+        }));
+
+        afterAll(() => new Promise(resolve => fs.unlink("example-plugin.velocity.jar", resolve)));
+
+        test("the format can be read", async () => {
+            const metadata = await ModMetadataReader.readMetadata("example-plugin.velocity.jar");
+            expect(metadata).toBeTruthy();
+        });
+
+        test("mod info can be read", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-plugin.velocity.jar"))!;
+            expect(metadata.id).toBe("example-mod");
+            expect(metadata.name).toBe("ExampleMod");
+            expect(metadata.version).toBe("0.1.0");
+            expect(metadata.loaders).toMatchObject(["velocity"] as any);
+        });
+    });
+
     describe("unsupported mod formats", () => {
         test("null is returned when the format is not supported or specified file does not exist", async () => {
             const metadata = await ModMetadataReader.readMetadata("example-mod.unknown.jar");
