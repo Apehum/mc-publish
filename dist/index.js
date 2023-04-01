@@ -23924,6 +23924,7 @@ class BungeeCordPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
         this.loaders = ["bungeecord"];
+        this.dependencies = [];
         // todo: deps?
     }
 }
@@ -23956,6 +23957,7 @@ class SpigotPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
         this.loaders = ["spigot", "paper"];
+        this.dependencies = [];
         // todo: deps?
     }
 }
@@ -23986,6 +23988,7 @@ class VelocityPluginMetadata extends ModConfig {
         this.name = String((_b = config.name) !== null && _b !== void 0 ? _b : "");
         this.version = String((_c = config.version) !== null && _c !== void 0 ? _c : "*");
         this.loaders = ["velocity"];
+        this.dependencies = [];
         // todo: deps?
     }
 }

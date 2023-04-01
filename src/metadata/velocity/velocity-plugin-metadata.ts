@@ -14,6 +14,7 @@ export default class VelocityPluginMetadata extends ModConfig {
         this.name = String(config.name ?? "");
         this.version = String(config.version ?? "*");
         this.loaders = ["velocity"];
+        this.dependencies = [];
         // todo: deps?
     }
 }

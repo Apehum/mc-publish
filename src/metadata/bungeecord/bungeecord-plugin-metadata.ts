@@ -14,6 +14,7 @@ export default class BungeeCordPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String(config.version ?? "*");
         this.loaders = ["bungeecord"];
+        this.dependencies = [];
         // todo: deps?
     }
 }
