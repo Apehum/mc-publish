@@ -163,7 +163,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
 
         this.logger.info(`Uploading ${fullVersion} (${files[0].name}) to ${PublisherTarget.toString(this.target)}`);
 
-        await this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
+        await this.publishMod(id, token, fullName, fullVersion, versionType, loaders.map(loader => loader.toLowerCase()), gameVersions, java, changelog, files, uniqueDependencies, <Record<string, unknown>><unknown>options);
     }
 
     protected abstract publishMod(id: string, token: string, name: string, version: string, versionType: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[], options: Record<string, unknown>): Promise<void>;

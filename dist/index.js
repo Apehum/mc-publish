@@ -24264,7 +24264,7 @@ class ModPublisher extends Publisher {
                 : (metadata === null || metadata === void 0 ? void 0 : metadata.dependencies) || [];
             const uniqueDependencies = dependencies.filter((x, i, self) => !x.ignore && self.findIndex(y => y.id === x.id && y.kind === x.kind) === i);
             this.logger.info(`Uploading ${fullVersion} (${files[0].name}) to ${publisher_target.toString(this.target)}`);
-            yield this.publishMod(id, token, fullName, fullVersion, versionType, loaders, gameVersions, java, changelog, files, uniqueDependencies, options);
+            yield this.publishMod(id, token, fullName, fullVersion, versionType, loaders.map(loader => loader.toLowerCase()), gameVersions, java, changelog, files, uniqueDependencies, options);
         });
     }
 }
