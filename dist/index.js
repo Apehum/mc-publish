@@ -23916,6 +23916,17 @@ class QuiltModMetadataReader extends ZippedModMetadataReader {
 
 ;// CONCATENATED MODULE: ./src/metadata/bungeecord/bungeecord-plugin-metadata.ts
 
+
+
+function bungeecord_plugin_metadata_getDependencyEntries(container, kind = dependency_kind.Depends) {
+    if (!Array.isArray(container)) {
+        return [];
+    }
+    return container.map(dependency => new ModConfigDependency({
+        id: dependency,
+        kind,
+    }));
+}
 class BungeeCordPluginMetadata extends ModConfig {
     constructor(config) {
         var _a, _b;
@@ -23923,9 +23934,9 @@ class BungeeCordPluginMetadata extends ModConfig {
         this.name = String((_a = config.name) !== null && _a !== void 0 ? _a : "");
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
-        this.loaders = ["bungeecord"];
-        this.dependencies = [];
-        // todo: deps?
+        this.loaders = ["BungeeCord"];
+        this.dependencies = bungeecord_plugin_metadata_getDependencyEntries(config.depends)
+            .concat(bungeecord_plugin_metadata_getDependencyEntries(config.softDepends, dependency_kind.Suggests));
     }
 }
 
@@ -23949,6 +23960,17 @@ class BungeeCordPluginMetadataReader extends ZippedModMetadataReader {
 
 ;// CONCATENATED MODULE: ./src/metadata/spigot/spigot-plugin-metadata.ts
 
+
+
+function spigot_plugin_metadata_getDependencyEntries(container, kind = dependency_kind.Depends) {
+    if (!Array.isArray(container)) {
+        return [];
+    }
+    return container.map(dependency => new ModConfigDependency({
+        id: dependency,
+        kind,
+    }));
+}
 class SpigotPluginMetadata extends ModConfig {
     constructor(config) {
         var _a, _b;
@@ -23957,8 +23979,8 @@ class SpigotPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
         this.loaders = ["spigot", "paper"];
-        this.dependencies = [];
-        // todo: deps?
+        this.dependencies = spigot_plugin_metadata_getDependencyEntries(config.depend)
+            .concat(spigot_plugin_metadata_getDependencyEntries(config.softdepend, dependency_kind.Suggests));
     }
 }
 
@@ -23980,6 +24002,17 @@ class SpigotPluginMetadataReader extends ZippedModMetadataReader {
 
 ;// CONCATENATED MODULE: ./src/metadata/velocity/velocity-plugin-metadata.ts
 
+
+
+function velocity_plugin_metadata_getDependencyEntries(container) {
+    if (!Array.isArray(container)) {
+        return [];
+    }
+    return container.map(dependency => new ModConfigDependency({
+        id: dependency.id,
+        kind: dependency.optional ? dependency_kind.Suggests : dependency_kind.Depends,
+    }));
+}
 class VelocityPluginMetadata extends ModConfig {
     constructor(config) {
         var _a, _b, _c;
@@ -23988,8 +24021,7 @@ class VelocityPluginMetadata extends ModConfig {
         this.name = String((_b = config.name) !== null && _b !== void 0 ? _b : "");
         this.version = String((_c = config.version) !== null && _c !== void 0 ? _c : "*");
         this.loaders = ["velocity"];
-        this.dependencies = [];
-        // todo: deps?
+        this.dependencies = velocity_plugin_metadata_getDependencyEntries(config.dependencies);
     }
 }
 

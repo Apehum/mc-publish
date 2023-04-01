@@ -1,5 +1,18 @@
 import Dependency from "../../metadata/dependency";
 import ModConfig from "../../metadata/mod-config";
+import DependencyKind from "../dependency-kind";
+import ModConfigDependency from "../mod-config-dependency";
+
+function getDependencyEntries(container: any, kind: DependencyKind = DependencyKind.Depends): Dependency[] {
+    if (!Array.isArray(container)) {
+        return [];
+    }
+
+    return container.map(dependency => new ModConfigDependency({
+        id: dependency,
+        kind,
+    }))
+}
 
 export default class SpigotPluginMetadata extends ModConfig {
     public readonly id: string;
@@ -14,7 +27,7 @@ export default class SpigotPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String(config.version ?? "*");
         this.loaders = ["spigot", "paper"];
-        this.dependencies = [];
-        // todo: deps?
+        this.dependencies = getDependencyEntries(config.depend)
+            .concat(getDependencyEntries(config.softdepend, DependencyKind.Suggests));
     }
 }
