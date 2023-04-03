@@ -300,7 +300,7 @@ describe("ModMetadataReader.readMetadata", () => {
             expect(metadata.id).toBe("ExampleMod");
             expect(metadata.name).toBe("ExampleMod");
             expect(metadata.version).toBe("0.1.0");
-            expect(metadata.loaders).toMatchObject(["spigot", "paper"] as any);
+            expect(metadata.loaders).toMatchObject(["spigot", "paper", "folia"] as any);
         });
     });
 

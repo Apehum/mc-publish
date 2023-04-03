@@ -27,6 +27,7 @@ export default class SpigotPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String(config.version ?? "*");
         this.loaders = ["spigot", "paper"];
+        if (config["folia-supported"]) this.loaders.push("folia");
         this.dependencies = getDependencyEntries(config.depend)
             .concat(getDependencyEntries(config.softdepend, DependencyKind.Suggests));
     }
