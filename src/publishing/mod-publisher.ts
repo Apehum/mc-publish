@@ -151,7 +151,7 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
 
         const fullName = options.splitReleases
             ? (loaders.includes("fabric") || loaders.includes("forge"))
-                ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)}] ${name} ${version}`
+                ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${minecraftVersion}] ${name} ${version}`
                 : `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)}] ${name} ${version}`
             : name;
 

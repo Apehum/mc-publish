@@ -23979,6 +23979,8 @@ class SpigotPluginMetadata extends ModConfig {
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
         this.loaders = ["spigot", "paper"];
+        if (config["folia-supported"])
+            this.loaders.push("folia");
         this.dependencies = spigot_plugin_metadata_getDependencyEntries(config.depend)
             .concat(spigot_plugin_metadata_getDependencyEntries(config.softdepend, dependency_kind.Suggests));
     }
@@ -24255,7 +24257,7 @@ class ModPublisher extends Publisher {
                 : version;
             const fullName = options.splitReleases
                 ? (loaders.includes("fabric") || loaders.includes("forge"))
-                    ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)}] ${name} ${version}`
+                    ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${minecraftVersion}] ${name} ${version}`
                     : `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)}] ${name} ${version}`
                 : name;
             const java = processMultilineInput(options.java);
