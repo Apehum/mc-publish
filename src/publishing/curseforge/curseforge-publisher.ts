@@ -18,7 +18,7 @@ export default class CurseForgePublisher extends ModPublisher {
         return PublisherTarget.CurseForge;
     }
 
-    protected async publishMod(id: string, token: string, name: string, _version: string, channel: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[]): Promise<void> {
+    protected async publishMod(id: string, token: string, name: string, _version: string, channel: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[], options: Record<string, unknown>): Promise<void> {
         let parentFileId = undefined;
         const versions = await convertToCurseForgeVersions(gameVersions, loaders, java, token);
         const projects = dependencies
@@ -28,6 +28,10 @@ export default class CurseForgePublisher extends ModPublisher {
                 type: forgeDependencyKinds.get(x.kind)
             }))
             .filter(x => x.slug && x.type);
+
+        if (options.splitReleases && loaders.includes("forge")) {
+            channel = "beta";
+        }
 
         for (const file of files) {
             const data = {

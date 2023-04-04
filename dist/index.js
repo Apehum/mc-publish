@@ -24989,7 +24989,7 @@ class CurseForgePublisher extends ModPublisher {
     get target() {
         return publisher_target.CurseForge;
     }
-    publishMod(id, token, name, _version, channel, loaders, gameVersions, java, changelog, files, dependencies) {
+    publishMod(id, token, name, _version, channel, loaders, gameVersions, java, changelog, files, dependencies, options) {
         return curseforge_publisher_awaiter(this, void 0, void 0, function* () {
             let parentFileId = undefined;
             const versions = yield convertToCurseForgeVersions(gameVersions, loaders, java, token);
@@ -25000,6 +25000,9 @@ class CurseForgePublisher extends ModPublisher {
                 type: forgeDependencyKinds.get(x.kind)
             }))
                 .filter(x => x.slug && x.type);
+            if (options.splitReleases && loaders.includes("forge")) {
+                channel = "beta";
+            }
             for (const file of files) {
                 const data = {
                     changelog,
