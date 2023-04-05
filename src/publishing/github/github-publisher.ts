@@ -48,10 +48,10 @@ export default class GitHubPublisher extends ModPublisher {
         }
 
         const generated = !releaseId;
+        const prerelease = mapBooleanInput(options.prerelease, channel !== VersionType.Release);
         if (!releaseId && (tag ??= environmentTag ?? version)) {
             const generateChangelog = mapBooleanInput(options.generateChangelog, !changelog);
             const draft = mapBooleanInput(options.draft, false);
-            const prerelease = mapBooleanInput(options.prerelease, channel !== VersionType.Release);
             const commitish = mapStringInput(options.commitish, null);
             const discussion = mapStringInput(options.discussion, null);
             releaseId = await this.createRelease(tag, name, changelog, generateChangelog, draft, prerelease, commitish, discussion, token);
@@ -73,6 +73,13 @@ export default class GitHubPublisher extends ModPublisher {
                 release_id: releaseId,
                 name: file.name,
                 data: <any>await file.getBuffer()
+            });
+
+            await octokit.rest.repos.updateRelease({
+                owner: repo.owner,
+                repo: repo.repo,
+                release_id: releaseId,
+                prerelease,
             });
         }
     }

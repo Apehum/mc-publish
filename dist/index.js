@@ -24443,10 +24443,10 @@ class GitHubPublisher extends ModPublisher {
                 releaseId = yield this.getReleaseIdByTag(version, token);
             }
             const generated = !releaseId;
+            const prerelease = mapBooleanInput(options.prerelease, channel !== version_type.Release);
             if (!releaseId && (tag !== null && tag !== void 0 ? tag : (tag = environmentTag !== null && environmentTag !== void 0 ? environmentTag : version))) {
                 const generateChangelog = mapBooleanInput(options.generateChangelog, !changelog);
                 const draft = mapBooleanInput(options.draft, false);
-                const prerelease = mapBooleanInput(options.prerelease, channel !== version_type.Release);
                 const commitish = mapStringInput(options.commitish, null);
                 const discussion = mapStringInput(options.discussion, null);
                 releaseId = yield this.createRelease(tag, name, changelog, generateChangelog, draft, prerelease, commitish, discussion, token);
@@ -24466,6 +24466,12 @@ class GitHubPublisher extends ModPublisher {
                     release_id: releaseId,
                     name: file.name,
                     data: yield file.getBuffer()
+                });
+                yield octokit.rest.repos.updateRelease({
+                    owner: repo.owner,
+                    repo: repo.repo,
+                    release_id: releaseId,
+                    prerelease,
                 });
             }
         });
