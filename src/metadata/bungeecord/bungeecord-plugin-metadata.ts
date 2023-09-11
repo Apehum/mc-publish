@@ -26,7 +26,7 @@ export default class BungeeCordPluginMetadata extends ModConfig {
         this.name = String(config.name ?? "");
         this.id = this.name;
         this.version = String(config.version ?? "*");
-        this.loaders = ["BungeeCord"];
+        this.loaders = ["bungeecord"];
         this.dependencies = getDependencyEntries(config.depends)
             .concat(getDependencyEntries(config.softDepends, DependencyKind.Suggests));
     }

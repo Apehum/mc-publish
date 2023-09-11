@@ -23934,7 +23934,7 @@ class BungeeCordPluginMetadata extends ModConfig {
         this.name = String((_a = config.name) !== null && _a !== void 0 ? _a : "");
         this.id = this.name;
         this.version = String((_b = config.version) !== null && _b !== void 0 ? _b : "*");
-        this.loaders = ["BungeeCord"];
+        this.loaders = ["bungeecord"];
         this.dependencies = bungeecord_plugin_metadata_getDependencyEntries(config.depends)
             .concat(bungeecord_plugin_metadata_getDependencyEntries(config.softDepends, dependency_kind.Suggests));
     }
