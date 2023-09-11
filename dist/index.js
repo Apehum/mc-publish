@@ -24794,7 +24794,7 @@ class ModrinthPublisher extends ModPublisher {
                 featured,
                 dependencies: projects
             };
-            this.logger.info(`Modrinth data: ${data}`);
+            this.logger.info(`Modrinth data: ${JSON.stringify(data)}`);
             yield createVersion(id, data, files, token);
         });
     }
