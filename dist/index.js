@@ -24429,7 +24429,7 @@ class GitHubPublisher extends ModPublisher {
             const octokit = github.getOctokit(token);
             const environmentTag = getEnvironmentTag();
             if (version.includes("SNAPSHOT")) {
-                // removes snapshot build number, aka 2.0.0-SNAPSHOT.1,
+                // removes snapshot build number, 2.0.0-SNAPSHOT+1 or 2.0.0-SNAPSHOT.1,
                 // so version will be just 2.0.0-SNAPSHOT
                 version = version.split("-")[0] + "-SNAPSHOT";
             }
@@ -24464,8 +24464,8 @@ class GitHubPublisher extends ModPublisher {
                 const existingAsset = existingAssets.find(x => {
                     // delete existing snapshot
                     if (x.name.includes("SNAPSHOT")) {
-                        const split = x.name.split(".");
-                        const assetName = split.slice(0, split.length - 2).join(".");
+                        const split = x.name.split("+");
+                        const assetName = split.slice(0, split.length - 1).join("+");
                         if (file.name.includes(assetName) || file.path.includes(assetName)) {
                             return true;
                         }
