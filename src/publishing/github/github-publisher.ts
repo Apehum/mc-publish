@@ -35,6 +35,12 @@ export default class GitHubPublisher extends ModPublisher {
         const octokit = github.getOctokit(token);
         const environmentTag = getEnvironmentTag();
 
+        if (version.includes("SNAPSHOT")) {
+            // removes snapshot build number, aka 2.0.0-SNAPSHOT.1,
+            // so version will be just 2.0.0-SNAPSHOT
+            version = version.split("-")[0] + "-SNAPSHOT";
+        }
+
         let tag = mapStringInput(options.tag, null);
         let releaseId = 0;
         if (tag) {
@@ -62,7 +68,19 @@ export default class GitHubPublisher extends ModPublisher {
 
         const existingAssets = generated ? [] : (await octokit.rest.repos.listReleaseAssets({ ...repo, release_id: releaseId })).data;
         for (const file of files) {
-            const existingAsset = existingAssets.find(x => x.name === file.name || x.name === file.path);
+            const existingAsset = existingAssets.find(x => {
+                // delete existing snapshot
+                if (x.name.includes("SNAPSHOT")) {
+                    const split = x.name.split(".");
+                    const assetName = split.slice(0, split.length - 2).join(".");
+
+                    if (file.name.includes(assetName) || file.path.includes(assetName)) {
+                        return true;
+                    }
+                }
+
+                return x.name === file.name || x.name === file.path;
+            });
             if (existingAsset) {
                 await octokit.rest.repos.deleteReleaseAsset({ ...repo, asset_id: existingAsset.id })
             }
