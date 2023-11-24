@@ -36,9 +36,9 @@ export default class GitHubPublisher extends ModPublisher {
         const environmentTag = getEnvironmentTag();
 
         if (version.includes("SNAPSHOT")) {
-            // removes snapshot build number, 2.0.0-SNAPSHOT+1 or 2.0.0-SNAPSHOT.1,
+            // removes snapshot build number, 2.0.0-SNAPSHOT+1 or 2.0.0-SNAPSHOT.1 or 2.1.0+1f48b7c-SNAPSHOT,
             // so version will be just 2.0.0-SNAPSHOT
-            version = version.split("-")[0] + "-SNAPSHOT";
+            version = version.split("+")[0].split("-")[0] + "-SNAPSHOT";
         }
 
         let tag = mapStringInput(options.tag, null);
