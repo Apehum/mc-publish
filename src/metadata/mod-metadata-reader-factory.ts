@@ -6,6 +6,7 @@ import ModMetadataReader from "./mod-metadata-reader";
 import BungeeCordPluginMetadataReader from "./bungeecord/bungeecord-plugin-metadata-reader";
 import SpigotPluginMetadataReader from "./spigot/spigot-plugin-metadata-reader";
 import VelocityPluginMetadataReader from "./velocity/velocity-plugin-metadata-reader";
+import NeoForgeModMetadataReader from "./neoforge/neoforge-mod-metadata-reader";
 
 export default class ModMetadataReaderFactory {
     public create(loaderType: ModLoaderType): ModMetadataReader {
@@ -15,6 +16,9 @@ export default class ModMetadataReaderFactory {
 
             case ModLoaderType.Forge:
                 return new ForgeModMetadataReader();
+
+            case ModLoaderType.NeoForge:
+                return new NeoForgeModMetadataReader();
 
             case ModLoaderType.Quilt:
                 return new QuiltModMetadataReader();

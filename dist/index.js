@@ -23152,7 +23152,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 7609:
+/***/ 524:
 /***/ ((__unused_webpack_module, __webpack_exports__, __nccwpck_require__) => {
 
 "use strict";
@@ -23534,10 +23534,11 @@ var ModLoaderType;
 (function (ModLoaderType) {
     ModLoaderType[ModLoaderType["Fabric"] = 1] = "Fabric";
     ModLoaderType[ModLoaderType["Forge"] = 2] = "Forge";
-    ModLoaderType[ModLoaderType["Quilt"] = 3] = "Quilt";
-    ModLoaderType[ModLoaderType["BungeeCord"] = 4] = "BungeeCord";
-    ModLoaderType[ModLoaderType["Velocity"] = 5] = "Velocity";
-    ModLoaderType[ModLoaderType["Spigot"] = 6] = "Spigot";
+    ModLoaderType[ModLoaderType["NeoForge"] = 3] = "NeoForge";
+    ModLoaderType[ModLoaderType["Quilt"] = 4] = "Quilt";
+    ModLoaderType[ModLoaderType["BungeeCord"] = 5] = "BungeeCord";
+    ModLoaderType[ModLoaderType["Velocity"] = 6] = "Velocity";
+    ModLoaderType[ModLoaderType["Spigot"] = 7] = "Spigot";
 })(ModLoaderType || (ModLoaderType = {}));
 (function (ModLoaderType) {
     function getValues() {
@@ -24042,7 +24043,54 @@ class VelocityPluginMetadataReader extends ZippedModMetadataReader {
     }
 }
 
+;// CONCATENATED MODULE: ./src/metadata/neoforge/neoforge-mod-metadata.ts
+
+
+
+const neoforge_mod_metadata_ignoredByDefault = ["minecraft", "java", "neoforge"];
+function neoforge_mod_metadata_createDependency(body) {
+    const type = body.type;
+    return new ModConfigDependency(Object.assign(Object.assign({ ignore: neoforge_mod_metadata_ignoredByDefault.includes(body.modId) }, body), { id: body.modId, version: body.versionRange, kind: type === "incompatible" && dependency_kind.Breaks || type === "required" && dependency_kind.Depends || dependency_kind.Recommends }));
+}
+class NeoForgeModMetadata extends ModConfig {
+    constructor(config) {
+        super(config);
+        const mods = Array.isArray(this.config.mods) && this.config.mods || [];
+        const mod = mods[0];
+        if (!mod) {
+            throw new Error("At least one mod should be specified");
+        }
+        this.id = mod.modId;
+        this.name = mod.displayName || this.id;
+        this.version = mod.version || "*";
+        this.loaders = ["neoforge"];
+        this.dependencies = Object
+            .values(this.config.dependencies || {})
+            .filter(Array.isArray)
+            .flatMap(x => x)
+            .map(neoforge_mod_metadata_createDependency)
+            .filter((x, i, self) => self.findIndex(y => x.id === y.id && x.kind === y.kind) === i);
+    }
+}
+
+;// CONCATENATED MODULE: ./src/metadata/neoforge/neoforge-mod-metadata-reader.ts
+
+
+
+class NeoForgeModMetadataReader extends ZippedModMetadataReader {
+    constructor() {
+        super("META-INF/neoforge.mods.toml");
+    }
+    loadConfig(buffer) {
+        return toml_default().parse(buffer.toString("utf8"));
+    }
+    createMetadataFromConfig(config) {
+        return new NeoForgeModMetadata(config);
+    }
+}
+
 ;// CONCATENATED MODULE: ./src/metadata/mod-metadata-reader-factory.ts
+
 
 
 
@@ -24057,6 +24105,8 @@ class ModMetadataReaderFactory {
                 return new FabricModMetadataReader();
             case mod_loader_type.Forge:
                 return new ForgeModMetadataReader();
+            case mod_loader_type.NeoForge:
+                return new NeoForgeModMetadataReader();
             case mod_loader_type.Quilt:
                 return new QuiltModMetadataReader();
             case mod_loader_type.BungeeCord:
@@ -33902,7 +33952,7 @@ module.exports = JSON.parse('[[[0,44],"disallowed_STD3_valid"],[[45,46],"valid"]
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
-/******/ 	var __webpack_exports__ = __nccwpck_require__(7609);
+/******/ 	var __webpack_exports__ = __nccwpck_require__(524);
 /******/ 	module.exports = __webpack_exports__;
 /******/ 	
 /******/ })()
