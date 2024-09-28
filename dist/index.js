@@ -25072,9 +25072,6 @@ class CurseForgePublisher extends ModPublisher {
                 type: forgeDependencyKinds.get(x.kind)
             }))
                 .filter(x => x.slug && x.type);
-            if (options.splitReleases && loaders.includes("forge")) {
-                channel = "beta";
-            }
             for (const file of files) {
                 const data = {
                     changelog,

@@ -29,10 +29,6 @@ export default class CurseForgePublisher extends ModPublisher {
             }))
             .filter(x => x.slug && x.type);
 
-        if (options.splitReleases && loaders.includes("forge")) {
-            channel = "beta";
-        }
-
         for (const file of files) {
             const data = {
                 changelog,

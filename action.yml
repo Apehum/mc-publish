@@ -64,10 +64,6 @@ inputs:
     description: A valid token for the GitHub API
     required: false
     default: ${undefined}
-  split-releases:
-    description: Split releases by files
-    required: false
-    default: ${undefined}
   files:
     description: A glob of the files to upload
     required: false
@@ -118,6 +114,10 @@ inputs:
     default: ${undefined}
   java:
     description: A list of supported Java versions
+    required: false
+    default: ${undefined}
+  split-releases:
+    description: Publish every file as a separate release
     required: false
     default: ${undefined}
   retry-attempts:
@@ -184,6 +184,10 @@ inputs:
     description: A list of supported Java versions
     required: false
     default: ${undefined}
+  modrinth-split-releases:
+    description: Publish every file as a separate release
+    required: false
+    default: ${undefined}
   modrinth-retry-attempts:
     description: The maximum number of attempts to publish assets
     default: ${undefined}
@@ -248,6 +252,10 @@ inputs:
     description: A list of supported Java versions
     required: false
     default: ${undefined}
+  curseforge-split-releases:
+    description: Publish every file as a separate release
+    required: false
+    default: ${undefined}
   curseforge-retry-attempts:
     description: The maximum number of attempts to publish assets
     default: ${undefined}
@@ -310,6 +318,10 @@ inputs:
     default: ${undefined}
   github-java:
     description: A list of supported Java versions
+    required: false
+    default: ${undefined}
+  github-split-releases:
+    description: Publish every file as a separate release
     required: false
     default: ${undefined}
   github-retry-attempts:

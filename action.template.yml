@@ -70,6 +70,8 @@ inputs:
     description: Determines the way automatic game-versions resolvement works
   java:
     description: A list of supported Java versions
+  split-releases:
+    description: Publish every file as a separate release
 
   retry-attempts:
     description: The maximum number of attempts to publish assets
