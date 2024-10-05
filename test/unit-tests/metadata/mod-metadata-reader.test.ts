@@ -170,6 +170,68 @@ describe("ModMetadataReader.readMetadata", () => {
         });
     });
 
+    describe("NeoForge", () => {
+        beforeAll(() => new Promise(resolve => {
+            const zip = new ZipFile();
+            zip.addFile("./test/content/neoforge.mods.toml", "META-INF/neoforge.mods.toml");
+            zip.end();
+            zip.outputStream.pipe(fs.createWriteStream("example-mod.neoforge.jar")).on("close", resolve);
+        }));
+
+        afterAll(() => new Promise(resolve => fs.unlink("example-mod.neoforge.jar", resolve)));
+
+        test("the format can be read", async () => {
+            const metadata = await ModMetadataReader.readMetadata("example-mod.neoforge.jar");
+            expect(metadata).toBeTruthy();
+        });
+
+        test("mod info can be read", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-mod.neoforge.jar"))!;
+            expect(metadata.id).toBe("example-mod");
+            expect(metadata.name).toBe("Example Mod");
+            expect(metadata.version).toBe("0.1.0");
+            expect(metadata.loaders).toMatchObject(["neoforge"] as any);
+        });
+
+        test("project ids can be specified in the config file", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-mod.neoforge.jar"))!;
+            expect(metadata.getProjectId(PublisherTarget.Modrinth)).toBe("AANobbMI");
+            expect(metadata.getProjectId(PublisherTarget.CurseForge)).toBe("394468");
+            expect(metadata.getProjectId(PublisherTarget.GitHub)).toBe("mc1.18-0.4.0-alpha5");
+        });
+
+        test("all dependencies are read", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-mod.neoforge.jar"))!;
+            expect(metadata.dependencies).toHaveLength(5);
+            const dependencies = metadata.dependencies.reduce((agg, x) => { agg[x.id] = x; return agg; }, <Record<string, Dependency>>{});
+            expect(dependencies["neoforge"]?.kind).toBe(DependencyKind.Depends);
+            expect(dependencies["minecraft"]?.kind).toBe(DependencyKind.Depends);
+            expect(dependencies["java"]?.kind).toBe(DependencyKind.Depends);
+            expect(dependencies["recommended-mod"]?.kind).toBe(DependencyKind.Recommends);
+            expect(dependencies["breaking-mod"]?.kind).toBe(DependencyKind.Breaks);
+        });
+
+        test("custom metadata can be attached to dependency entry", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-mod.neoforge.jar"))!;
+            const recommended = metadata.dependencies.find(x => x.id === "recommended-mod")!;
+            expect(recommended).toBeTruthy();
+            expect(recommended.id).toBe("recommended-mod");
+            expect(recommended.kind).toBe(DependencyKind.Recommends);
+            expect(recommended.version).toBe("0.2.0");
+            expect(recommended.ignore).toBe(true);
+            expect(recommended.getProjectSlug(PublisherTarget.Modrinth)).toBe("AAAA");
+            expect(recommended.getProjectSlug(PublisherTarget.CurseForge)).toBe("42");
+            expect(recommended.getProjectSlug(PublisherTarget.GitHub)).toBe("v0.2.0");
+        });
+
+        test("special case dependencies (minecraft, java and forge) are ignored by default", async () => {
+            const metadata = (await ModMetadataReader.readMetadata("example-mod.neoforge.jar"))!;
+            expect(metadata.dependencies.find(x => x.id === "minecraft")!.ignore).toBe(true);
+            expect(metadata.dependencies.find(x => x.id === "java")!.ignore).toBe(true);
+            expect(metadata.dependencies.find(x => x.id === "neoforge")!.ignore).toBe(true);
+        });
+    });
+
     describe("Quilt", () => {
         beforeAll(() => new Promise(resolve => {
             const zip = new ZipFile();

@@ -18,7 +18,7 @@ export default class CurseForgePublisher extends ModPublisher {
         return PublisherTarget.CurseForge;
     }
 
-    protected async publishMod(id: string, token: string, name: string, _version: string, channel: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[], options: Record<string, unknown>): Promise<void> {
+    protected async publishMod(id: string, token: string, name: string, _version: string, channel: string, loaders: string[], gameVersions: string[], java: string[], changelog: string, files: File[], dependencies: Dependency[], _options: Record<string, unknown>): Promise<void> {
         let parentFileId = undefined;
         const versions = await convertToCurseForgeVersions(gameVersions, loaders, java, token);
         const projects = dependencies

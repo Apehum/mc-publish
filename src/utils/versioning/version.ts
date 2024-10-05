@@ -24,6 +24,10 @@ export default class Version {
         return typeof version === "string" && this.equals(new Version(version));
     }
 
+    public toString(): string {
+        return `${this.major}.${this.minor}.${this.build}`;
+    }
+
     public static fromName(name: string): string {
         const match = name.match(/[a-z]{0,2}\d+\.\d+.*/i);
         return match ? match[0] : name;

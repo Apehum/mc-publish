@@ -10,6 +10,7 @@ import Version from "../utils/versioning/version";
 import VersionType from "../utils/versioning/version-type";
 import DependencyKind from "../metadata/dependency-kind";
 import path from "path";
+import ModLoaderType from "../metadata/mod-loader-type";
 
 interface ModPublisherOptions {
     id: string;
@@ -128,12 +129,16 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         const gameVersions = processMultilineInput(options.gameVersions);
-        const minecraftVersion =
+        const minecraftDisplayVersion =
             parseVersionNameFromFileVersion(filename) ||
             metadata?.dependencies.filter(x => x.id === "minecraft").map(x => parseVersionName(x.version))[0] ||
             parseVersionNameFromFileVersion(version);
-        if (!gameVersions.length && this.requiresGameVersions) {
 
+        const minecraftVersion =
+            metadata?.dependencies.filter(x => x.id === "minecraft").map(x => x.version)[0] ||
+            parseVersionNameFromFileVersion(version);
+
+        if (!gameVersions.length && this.requiresGameVersions) {
             if (minecraftVersion) {
                 const resolver = options.versionResolver && MinecraftVersionResolver.byName(options.versionResolver) || MinecraftVersionResolver.releasesIfAny;
                 gameVersions.push(...(await resolver.resolve(minecraftVersion)).map(x => x.id));
@@ -144,15 +149,15 @@ export default abstract class ModPublisher extends Publisher<ModPublisherOptions
         }
 
         const fullVersion = options.splitReleases
-            ? (loaders.includes("fabric") || loaders.includes("forge"))
-                ? `${loaders[0]}-${minecraftVersion}-${version}`
+            ? (loaders.includes("fabric") || loaders.includes("forge") || loaders.includes("neoforge"))
+                ? `${loaders[0]}-${minecraftDisplayVersion}-${version}`
                 : `${loaders[0]}-${version}`
             : version;
 
         const fullName = options.splitReleases
-            ? (loaders.includes("fabric") || loaders.includes("forge"))
-                ? `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)} ${minecraftVersion}] ${name} ${version}`
-                : `[${loaders[0].substring(0, 1).toUpperCase() + loaders[0].substring(1)}] ${name} ${version}`
+            ? (loaders.includes("fabric") || loaders.includes("forge") || loaders.includes("neoforge"))
+                ? `[${ModLoaderType.toString(ModLoaderType.fromString(loaders[0]))} ${minecraftDisplayVersion}] ${name} ${version}`
+                : `[${ModLoaderType.toString(ModLoaderType.fromString(loaders[0]))}] ${name} ${version}`
             : name;
 
         const java = processMultilineInput(options.java);

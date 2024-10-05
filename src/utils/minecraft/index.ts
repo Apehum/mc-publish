@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import Version from "../versioning/version";
+import semver from "semver";
 
 export enum MinecraftVersionType {
     Release = "release",
@@ -137,22 +138,7 @@ export async function getLatestRelease(): Promise<MinecraftVersion | null> {
 }
 
 export async function getCompatibleBuilds(build: string | Version): Promise<MinecraftVersion[]> {
-    if (!(build instanceof Version)) {
-        build = new Version(build);
-    }
-    const versions = new Array<MinecraftVersion>();
-    for (const version of await getVersions()) {
-        if (version.version.major !== build.major) {
-            continue;
-        }
-
-        if (version.version.minor < build.minor) {
-            break;
-        }
-
-        if (version.version.minor === build.minor && version.version.build >= build.build) {
-            versions.push(version);
-        }
-    }
-    return versions;
+    const mcVersions = await getVersions();
+    return mcVersions
+        .filter(mcVersion => semver.satisfies(mcVersion.version.toString(), build.toString()));
 }
