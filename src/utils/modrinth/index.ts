@@ -38,7 +38,8 @@ export function createVersion(modId: string, data: Record<string, any>, files: F
     const response = fetch(`${baseUrl}/version`, {
         method: "POST",
         headers: form.getHeaders({
-            Authorization: token,
+            "Authorization": token,
+            "User-Agent": "GitHub Actions"
         }),
         body: <any>form
     });

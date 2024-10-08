@@ -27172,7 +27172,8 @@ function createVersion(modId, data, files, token) {
     const response = lib_default()(`${baseUrl}/version`, {
         method: "POST",
         headers: form.getHeaders({
-            Authorization: token,
+            "Authorization": token,
+            "User-Agent": "GitHub Actions"
         }),
         body: form
     });
