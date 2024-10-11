@@ -139,6 +139,33 @@ export async function getLatestRelease(): Promise<MinecraftVersion | null> {
 
 export async function getCompatibleBuilds(build: string | Version): Promise<MinecraftVersion[]> {
     const mcVersions = await getVersions();
+
+    let buildString = build.toString();
+
+    if (buildString.startsWith("[") || buildString.startsWith("(")) {
+        let outputString: string;
+
+        if (buildString.startsWith("[,")) {
+            outputString = `<=${buildString.substring(2, buildString.length - 1)}`;
+        } else if (buildString.startsWith("(,")) {
+            outputString = `<${buildString.substring(2, buildString.length - 1)}`;
+        } else if (buildString.endsWith(",]")) {
+            outputString = `>=${buildString.substring(1, buildString.length - 2)}`;
+        } else if (buildString.endsWith(",)")) {
+            outputString = `>${buildString.substring(1, buildString.length - 2)}`;
+        } else {
+            const split = buildString.substring(1, buildString.length - 1).split(",");
+
+            if (split.length === 1) {
+                outputString = split[0];
+            } else {
+                outputString = `>=${split[0]} <=${split[1]}`;
+            }
+        }
+
+        buildString = outputString;
+    }
+
     return mcVersions
-        .filter(mcVersion => semver.satisfies(mcVersion.version.toString(), build.toString()));
+        .filter(mcVersion => semver.satisfies(mcVersion.version.toString(), buildString));
 }

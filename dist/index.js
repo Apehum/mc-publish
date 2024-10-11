@@ -25973,8 +25973,35 @@ function getLatestRelease() {
 function getCompatibleBuilds(build) {
     return minecraft_awaiter(this, void 0, void 0, function* () {
         const mcVersions = yield getVersions();
+        let buildString = build.toString();
+        if (buildString.startsWith("[") || buildString.startsWith("(")) {
+            let outputString;
+            if (buildString.startsWith("[,")) {
+                outputString = `<=${buildString.substring(2, buildString.length - 1)}`;
+            }
+            else if (buildString.startsWith("(,")) {
+                outputString = `<${buildString.substring(2, buildString.length - 1)}`;
+            }
+            else if (buildString.endsWith(",]")) {
+                outputString = `>=${buildString.substring(1, buildString.length - 2)}`;
+            }
+            else if (buildString.endsWith(",)")) {
+                outputString = `>${buildString.substring(1, buildString.length - 2)}`;
+            }
+            else {
+                const split = buildString.substring(1, buildString.length - 1).split(",");
+                if (split.length === 1) {
+                    outputString = split[0];
+                }
+                else {
+                    outputString = `>=${split[0]} <=${split[1]}`;
+                }
+            }
+            // maven version range
+            buildString = outputString;
+        }
         return mcVersions
-            .filter(mcVersion => semver_default().satisfies(mcVersion.version.toString(), build.toString()));
+            .filter(mcVersion => semver_default().satisfies(mcVersion.version.toString(), buildString));
     });
 }
 
