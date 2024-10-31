@@ -145,6 +145,7 @@ export async function getCompatibleBuilds(build: string | Version): Promise<Mine
     if (buildString.startsWith("[") || buildString.startsWith("(")) {
         let outputString: string;
 
+
         if (buildString.startsWith("[,")) {
             outputString = `<=${buildString.substring(2, buildString.length - 1)}`;
         } else if (buildString.startsWith("(,")) {
@@ -159,7 +160,10 @@ export async function getCompatibleBuilds(build: string | Version): Promise<Mine
             if (split.length === 1) {
                 outputString = split[0];
             } else {
-                outputString = `>=${split[0]} <=${split[1]}`;
+                const startBoundsSymbol = buildString.startsWith("[") ? ">=" : ">"
+                const endBoundsSymbol = buildString.endsWith("]") ? "<=" : "<"
+
+                outputString = `${startBoundsSymbol}${split[0]} ${endBoundsSymbol}${split[1]}`;
             }
         }
 
